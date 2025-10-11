@@ -24,6 +24,8 @@ repositories {
     mavenCentral()
 }
 
+val mockitoAgent = configurations.create("mockitoAgent")
+
 dependencies {
     implementation(libs.bundles.spring.boot.starter)
     implementation(libs.jspecify)
@@ -37,8 +39,11 @@ dependencies {
     testImplementation(libs.bundles.testcontainers)
     testImplementation(libs.mockito.core)
     testRuntimeOnly(libs.junit.platform.launcher)
+
+    mockitoAgent(libs.mockito.core) { isTransitive = false }
 }
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    jvmArgs("-javaagent:${mockitoAgent.asPath}")
 }

@@ -3,8 +3,10 @@ package com.wild.ecommerce.category;
 import com.wild.ecommerce.category.dto.CategoryDTO;
 import com.wild.ecommerce.category.dto.CreateCategoryRequest;
 import com.wild.ecommerce.category.dto.UpdateCategoryRequest;
+import com.wild.ecommerce.common.dto.PageResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -52,8 +54,8 @@ public class CategoryController {
         Sort sort = Sort.by(direction, sortBy);
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
 
-        var categoriesResponse = categoryService.getAllCategories(pageable, name);
-        var categories = categoriesResponse.toPage();
+        PageResponse<CategoryDTO> categoriesResponse = categoryService.getAllCategories(pageable, name);
+        Page<CategoryDTO> categories = categoriesResponse.toPage();
 
         return new ResponseEntity<>(new PagedModel<>(categories), HttpStatus.OK);
     }
