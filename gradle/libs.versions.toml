@@ -1,0 +1,53 @@
+[versions]
+spring-boot = "3.5.6"
+spring-dependency-management = "1.1.7"
+dotenv-java = "3.2.0"
+jspecify = "1.0.0"
+springdoc-openapi = "2.8.13"
+mockito = "5.20.0"
+
+[libraries]
+spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
+spring-boot-starter-cache = { module = "org.springframework.boot:spring-boot-starter-cache" }
+spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa" }
+spring-boot-starter-data-redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
+spring-boot-starter-mail = { module = "org.springframework.boot:spring-boot-starter-mail" }
+spring-boot-starter-oauth2-client = { module = "org.springframework.boot:spring-boot-starter-oauth2-client" }
+spring-boot-starter-security = { module = "org.springframework.boot:spring-boot-starter-security" }
+spring-boot-starter-thymeleaf = { module = "org.springframework.boot:spring-boot-starter-thymeleaf" }
+spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
+spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
+spring-boot-devtools = { module = "org.springframework.boot:spring-boot-devtools" }
+mysql = { module = "com.mysql:mysql-connector-j" }
+h2 = { module = "com.h2database:h2" }
+thymeleaf-extras-springsecurity6 = { module = "org.thymeleaf.extras:thymeleaf-extras-springsecurity6" }
+lombok = { module = "org.projectlombok:lombok" }
+dotenv-java = { module = "io.github.cdimascio:dotenv-java", version.ref = "dotenv-java" }
+jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
+springdoc-openapi = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc-openapi" }
+spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
+spring-security-test = { module = "org.springframework.security:spring-security-test" }
+spring-boot-testcontainers = { module = "org.springframework.boot:spring-boot-testcontainers" }
+testcontainers-mysql = { module = "org.testcontainers:mysql" }
+testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+
+[bundles]
+spring-boot-starter = [
+    "spring-boot-starter-actuator",
+    "spring-boot-starter-cache",
+    "spring-boot-starter-data-jpa",
+    "spring-boot-starter-data-redis",
+    "spring-boot-starter-mail",
+    "spring-boot-starter-thymeleaf",
+    "spring-boot-starter-validation",
+    "spring-boot-starter-web",
+    "spring-boot-devtools"
+]
+spring-boot-test = ["spring-boot-starter-test", "spring-boot-testcontainers"]
+testcontainers = ["testcontainers-junit-jupiter", "testcontainers-mysql"]
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }
