@@ -3,6 +3,7 @@ package com.wild.ecommerce.authentication;
 import com.wild.ecommerce.authentication.dto.AuthenticationRequest;
 import com.wild.ecommerce.authentication.dto.AuthenticationResponse;
 import com.wild.ecommerce.authentication.dto.RegisterRequest;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@Tag(name = "Authentication", description = "Endpoints for user registration and login")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;

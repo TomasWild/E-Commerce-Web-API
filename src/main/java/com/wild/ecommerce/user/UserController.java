@@ -1,6 +1,7 @@
 package com.wild.ecommerce.user;
 
 import com.wild.ecommerce.user.dto.ChangePasswordRequest;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import java.security.Principal;
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
+@Tag(name = "Users", description = "Endpoints for user account management")
 public class UserController {
 
     private final UserService userService;
