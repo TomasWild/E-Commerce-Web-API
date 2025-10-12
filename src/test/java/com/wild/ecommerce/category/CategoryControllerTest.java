@@ -1,6 +1,7 @@
 package com.wild.ecommerce.category;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wild.ecommerce.authentication.JwtService;
 import com.wild.ecommerce.category.dto.CategoryDTO;
 import com.wild.ecommerce.category.dto.CreateCategoryRequest;
 import com.wild.ecommerce.category.dto.UpdateCategoryRequest;
@@ -8,12 +9,14 @@ import com.wild.ecommerce.common.dto.PageResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -38,6 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CategoryController.class)
+@AutoConfigureMockMvc(addFilters = false)
 public class CategoryControllerTest {
 
     @Autowired
@@ -48,6 +52,12 @@ public class CategoryControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private UserDetailsService userDetailsService;
 
     private UUID categoryId1;
     private UUID categoryId2;
