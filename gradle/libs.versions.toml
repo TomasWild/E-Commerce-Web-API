@@ -5,6 +5,8 @@ dotenv-java = "3.2.0"
 jspecify = "1.0.0"
 springdoc-openapi = "2.8.13"
 mockito = "5.20.0"
+jjwt = "0.13.0"
+bouncy-castle-crypto = "1.82"
 
 [libraries]
 spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
@@ -32,6 +34,10 @@ testcontainers-mysql = { module = "org.testcontainers:mysql" }
 testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+jjwt-api = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jjwt" }
+jjwt-impl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jjwt" }
+jjwt-jackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jjwt" }
+bouncy-castle-crypto = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncy-castle-crypto" }
 
 [bundles]
 spring-boot-starter = [
@@ -40,13 +46,16 @@ spring-boot-starter = [
     "spring-boot-starter-data-jpa",
     "spring-boot-starter-data-redis",
     "spring-boot-starter-mail",
+    "spring-boot-starter-oauth2-client",
+    "spring-boot-starter-security",
     "spring-boot-starter-thymeleaf",
     "spring-boot-starter-validation",
     "spring-boot-starter-web",
     "spring-boot-devtools"
 ]
-spring-boot-test = ["spring-boot-starter-test", "spring-boot-testcontainers"]
+spring-boot-test = ["spring-boot-starter-test", "spring-security-test", "spring-boot-testcontainers"]
 testcontainers = ["testcontainers-junit-jupiter", "testcontainers-mysql"]
+jjwt = ["jjwt-impl", "jjwt-jackson"]
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
