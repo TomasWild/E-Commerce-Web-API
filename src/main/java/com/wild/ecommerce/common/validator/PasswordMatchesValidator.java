@@ -1,6 +1,6 @@
 package com.wild.ecommerce.common.validator;
 
-import com.wild.ecommerce.authentication.dto.RegisterRequest;
+import com.wild.ecommerce.auth.dto.RegisterRequest;
 import com.wild.ecommerce.common.util.PasswordMatches;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
