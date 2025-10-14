@@ -89,7 +89,7 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("Product with ID '" + id + "' not found"));
 
         if (request.categoryId() != null) {
-            if (product.getCategory().getId().equals(request.categoryId())) {
+            if (!product.getCategory().getId().equals(request.categoryId())) {
                 Category category = categoryRepository.findById(request.categoryId())
                         .orElseThrow(() -> new ResourceNotFoundException("Category with ID '" + request.categoryId() + "' not found"));
 

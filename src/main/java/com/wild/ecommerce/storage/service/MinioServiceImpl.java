@@ -53,7 +53,7 @@ public class MinioServiceImpl implements MinioService {
             return fileUrl;
         } catch (IOException e) {
             log.error("Failed to upload image to S3", e);
-            throw new IllegalStateException("Failed to upload image to S3");
+            throw new FileUploadException("Failed to upload image to S3");
         }
     }
 
@@ -82,7 +82,7 @@ public class MinioServiceImpl implements MinioService {
                 log.info("Created S3 bucket '{}'", bucketName);
             } else {
                 log.error("Failed to check if bucket '{}' exists", bucketName, e);
-                throw new FileUploadException("Failed to check if bucket '" + bucketName + "' exists");
+                throw new IllegalStateException("Failed to check if bucket '" + bucketName + "' exists");
             }
         }
     }
