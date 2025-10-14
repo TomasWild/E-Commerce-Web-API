@@ -4,8 +4,6 @@ import com.wild.ecommerce.common.util.FileSize;
 import com.wild.ecommerce.common.util.FileType;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,18 +11,15 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public record UpdateProductRequest(
-        @NotBlank(message = "Name is required")
         @Size(min = 2, max = 50, message = "Name must be between 2 and 50 characters")
         String name,
 
-        @NotBlank(message = "Brand is required")
         @Size(min = 2, max = 50, message = "Brand must be between 2 and 50 characters")
         String brand,
 
         @Size(max = 1000, message = "Description must be less than 1000 characters")
         String description,
 
-        @NotNull(message = "Price is required")
         @DecimalMin(value = "0.01", message = "Price must be greater than 0")
         BigDecimal price,
 
@@ -35,7 +30,6 @@ public record UpdateProductRequest(
         @FileSize(min = 50 * 1024, max = 10 * 1024 * 1024, message = "Image must be between 50KB and 10MB")
         MultipartFile image,
 
-        @NotNull(message = "Category ID is required")
         UUID categoryId
 ) {
 }
