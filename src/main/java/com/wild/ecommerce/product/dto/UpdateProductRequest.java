@@ -24,7 +24,7 @@ public record UpdateProductRequest(
         BigDecimal price,
 
         @Min(value = 0, message = "Stock cannot be negative")
-        int stock,
+        Integer stock,
 
         @FileType(allowed = {"image/jpeg", "image/jpg", "image/png"}, message = "Only JPEG, JPG and PNG files are allowed")
         @FileSize(min = 50 * 1024, max = 10 * 1024 * 1024, message = "Image must be between 50KB and 10MB")
