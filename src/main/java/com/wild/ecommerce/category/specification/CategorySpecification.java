@@ -1,6 +1,7 @@
 package com.wild.ecommerce.category.specification;
 
 import com.wild.ecommerce.category.model.Category;
+import org.jspecify.annotations.Nullable;
 import org.springframework.data.jpa.domain.Specification;
 
 public final class CategorySpecification {
@@ -8,7 +9,7 @@ public final class CategorySpecification {
     private CategorySpecification() {
     }
 
-    public static Specification<Category> filterBy(String name) {
+    public static Specification<Category> filterBy(@Nullable String name) {
         return (root, _, cb) -> {
             var predicate = cb.conjunction();
 

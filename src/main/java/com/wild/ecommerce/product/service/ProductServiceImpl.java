@@ -39,7 +39,10 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public ProductDTO createProduct(CreateProductRequest request) {
         Category category = categoryRepository.findById(request.categoryId())
-                .orElseThrow(() -> new ResourceNotFoundException("Category with ID '" + request.categoryId() + "' not found"));
+                .orElseThrow(() -> {
+                    log.warn("Failed to create product - category not found: {}", request.categoryId());
+                    return new ResourceNotFoundException("Category with ID '" + request.categoryId() + "' not found");
+                });
 
         Product product = new Product();
         product.setName(request.name());
@@ -69,6 +72,7 @@ public class ProductServiceImpl implements ProductService {
 
         Page<ProductDTO> page = productRepository.findAll(specification, pageable)
                 .map(productMapper);
+        log.debug("Retrieved {} products out of {} total", page.getNumberOfElements(), page.getTotalElements());
 
         return new PageResponse<>(page);
     }
@@ -77,7 +81,10 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(readOnly = true)
     public ProductDTO getProductById(UUID id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Product with ID '" + id + "' not found"));
+                .orElseThrow(() -> {
+                    log.warn("Product not found with ID: {}", id);
+                    return new ResourceNotFoundException("Product with ID '" + id + "' not found");
+                });
 
         return productMapper.apply(product);
     }
@@ -86,12 +93,18 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public ProductDTO updateProduct(UUID id, UpdateProductRequest request) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Product with ID '" + id + "' not found"));
+                .orElseThrow(() -> {
+                    log.warn("Failed to update - product not found with ID: {}", id);
+                    return new ResourceNotFoundException("Product with ID '" + id + "' not found");
+                });
 
         if (request.categoryId() != null) {
             if (!product.getCategory().getId().equals(request.categoryId())) {
                 Category category = categoryRepository.findById(request.categoryId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Category with ID '" + request.categoryId() + "' not found"));
+                        .orElseThrow(() -> {
+                            log.warn("Failed to update product - category not found: {}", request.categoryId());
+                            return new ResourceNotFoundException("Category with ID '" + request.categoryId() + "' not found");
+                        });
 
                 product.setCategory(category);
             }
@@ -125,7 +138,10 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public void deleteProduct(UUID id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Product with ID '" + id + "' not found"));
+                .orElseThrow(() -> {
+                    log.warn("Failed to delete - product not found with ID: {}", id);
+                    return new ResourceNotFoundException("Product with ID '" + id + "' not found");
+                });
 
         String imageUrl = product.getImageUrl();
 

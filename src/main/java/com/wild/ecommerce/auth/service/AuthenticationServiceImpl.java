@@ -42,6 +42,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Transactional
     public String register(RegisterRequest request) {
         if (userRepository.findByEmailIgnoreCase(request.email()).isPresent()) {
+            log.warn("Registration failed - email already exists: {}", request.email());
             throw new ResourceAlreadyExistsException("User with email '" + request.email() + "' already exists");
         }
 
@@ -68,12 +69,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     new UsernamePasswordAuthenticationToken(request.email(), request.password())
             );
         } catch (DisabledException e) {
-            log.error("User with email '{}' is disabled", request.email());
+            log.warn("User with email '{}' is disabled", request.email());
             throw new DisabledException("User with email '" + request.email() + "' is disabled");
         }
 
         User user = userRepository.findByEmailIgnoreCase(request.email())
-                .orElseThrow(() -> new ResourceNotFoundException("User with email '" + request.email() + "' not found"));
+                .orElseThrow(() -> {
+                    log.error("Authentication failed - user not found: {}", request.email());
+                    return new ResourceNotFoundException("User with email '" + request.email() + "' not found");
+                });
 
         String accessToken = jwtService.generateToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
@@ -91,13 +95,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Transactional
     public String verifyEmail(String token) {
         VerificationToken verificationToken = verificationTokenRepository.findByToken(token)
-                .orElseThrow(() -> new InvalidTokenException("Verification token not found"));
+                .orElseThrow(() -> {
+                    log.warn("Email verification failed - invalid token");
+                    return new InvalidTokenException("Verification token not found");
+                });
 
         if (verificationToken.isUsed()) {
+            log.warn("Email verification failed - token already used for user: {}", verificationToken.getUser().getEmail());
             throw new InvalidTokenException("Token already used");
         }
 
         if (verificationToken.isExpired()) {
+            log.warn("Email verification failed - expired token for user: {}", verificationToken.getUser().getEmail());
             throw new InvalidTokenException("Token expired. Please request a new verification email");
         }
 
@@ -115,9 +124,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Transactional
     public String resendVerificationEmail(String email) {
         User user = userRepository.findByEmailIgnoreCase(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User with email '" + email + "' not found"));
+                .orElseThrow(() -> {
+                    log.warn("Resend verification failed - user not found: {}", email);
+                    return new ResourceNotFoundException("User with email '" + email + "' not found");
+                });
 
         if (user.isEnabled()) {
+            log.warn("Resend verification failed - account already verified: {}", email);
             throw new AccountAlreadyVerifiedException("Account already verified");
         }
 
@@ -136,6 +149,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         verificationToken.setExpiryDate(LocalDateTime.now().plusMinutes(15));
 
         verificationTokenRepository.save(verificationToken);
+        log.debug("Verification token generated for user: {}", user.getEmail());
 
         return token;
     }

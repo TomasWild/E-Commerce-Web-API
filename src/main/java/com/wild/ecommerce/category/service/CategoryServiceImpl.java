@@ -33,6 +33,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public CategoryDTO createCategory(CreateCategoryRequest request) {
         if (categoryRepository.existsByNameIgnoreCase(request.name())) {
+            log.warn("Failed to create category - name '{}' already exists", request.name());
             throw new ResourceAlreadyExistsException("Category with name '" + request.name() + "' already exists");
         }
 
@@ -60,7 +61,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional(readOnly = true)
     public CategoryDTO getCategoryById(UUID id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Category with ID '" + id + "' not found"));
+                .orElseThrow(() -> {
+                    log.warn("Category not found with ID: {}", id);
+                    return new ResourceNotFoundException("Category with ID '" + id + "' not found");
+                });
 
         return categoryMapper.apply(category);
     }
@@ -69,11 +73,15 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public CategoryDTO updateCategory(UUID id, UpdateCategoryRequest request) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Category with ID '" + id + "' not found"));
+                .orElseThrow(() -> {
+                    log.warn("Failed to update - category not found with ID: {}", id);
+                    return new ResourceNotFoundException("Category with ID '" + id + "' not found");
+                });
 
         if (!category.getName().equalsIgnoreCase(request.name()) &&
                 categoryRepository.existsByNameIgnoreCase(request.name())
         ) {
+            log.warn("Failed to update category {} - name '{}' already exists", id, request.name());
             throw new ResourceAlreadyExistsException("Category with name '" + request.name() + "' already exists");
         }
 
@@ -88,7 +96,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public void deleteCategory(UUID id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Category with ID '" + id + "' not found"));
+                .orElseThrow(() -> {
+                    log.warn("Failed to delete - category not found with ID: {}", id);
+                    return new ResourceNotFoundException("Category with ID '" + id + "' not found");
+                });
 
         categoryRepository.delete(category);
     }

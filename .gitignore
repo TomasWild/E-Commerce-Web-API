@@ -40,3 +40,6 @@ out/
 .env
 
 .containers
+
+# SSL keystore
+src/main/resources/*.p12

@@ -26,17 +26,23 @@ public class UserServiceImpl implements UserService {
     public void changePassword(ChangePasswordRequest request, Principal principal) {
         String username = principal.getName();
         User user = userRepository.findByEmailIgnoreCase(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> {
+                    log.error("Password change failed - user not found: {}", username);
+                    return new UsernameNotFoundException("User not found");
+                });
 
         if (!passwordEncoder.matches(request.currentPassword(), user.getPassword())) {
+            log.warn("Password change failed for user: {} - incorrect current password", username);
             throw new InvalidPasswordException("Wrong password");
         }
 
         if (passwordEncoder.matches(request.newPassword(), user.getPassword())) {
+            log.warn("Password change failed for user: {} - new password same as current", username);
             throw new InvalidPasswordException("New password must be different from current password");
         }
 
         if (!request.confirmNewPassword().equals(request.newPassword())) {
+            log.warn("Password change failed for user: {} - password confirmation mismatch", username);
             throw new InvalidPasswordException("Passwords do not match");
         }
 
