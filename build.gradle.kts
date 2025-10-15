@@ -40,7 +40,6 @@ dependencies {
     implementation(libs.jjwt.api)
     runtimeOnly(libs.bundles.jjwt)
     runtimeOnly(libs.mysql)
-    runtimeOnly(libs.h2)
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
     testImplementation(libs.bundles.spring.boot.test)
