@@ -81,12 +81,4 @@ public class CartItem extends Auditable {
 
         this.quantity -= amount;
     }
-
-    public void updateUnitPrice(BigDecimal newPrice) {
-        if (newPrice == null || newPrice.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Price must be non-negative");
-        }
-
-        this.price = newPrice;
-    }
 }
