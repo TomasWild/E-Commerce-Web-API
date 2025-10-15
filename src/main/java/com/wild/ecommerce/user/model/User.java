@@ -1,6 +1,7 @@
 package com.wild.ecommerce.user.model;
 
 import com.wild.ecommerce.auth.model.VerificationToken;
+import com.wild.ecommerce.cart.model.Cart;
 import com.wild.ecommerce.common.model.Auditable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -11,6 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -55,6 +57,9 @@ public class User extends Auditable implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<VerificationToken> verificationTokens;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Cart cart;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

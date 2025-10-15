@@ -164,4 +164,36 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(InvalidCartOperationException.class)
+    public ResponseEntity<?> handleInvalidCartOperationException(
+            InvalidCartOperationException ex,
+            HttpServletRequest request
+    ) {
+        var response = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserNotAuthenticatedException.class)
+    public ResponseEntity<?> handleUserNotAuthenticatedException(
+            UserNotAuthenticatedException ex,
+            HttpServletRequest request
+    ) {
+        var response = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.UNAUTHORIZED.value(),
+                HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
 }
