@@ -1,5 +1,6 @@
 package com.wild.ecommerce.user.model;
 
+import com.wild.ecommerce.address.model.Address;
 import com.wild.ecommerce.auth.model.VerificationToken;
 import com.wild.ecommerce.cart.model.Cart;
 import com.wild.ecommerce.common.model.Auditable;
@@ -60,6 +61,9 @@ public class User extends Auditable implements UserDetails {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Cart cart;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Address> addresses;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
