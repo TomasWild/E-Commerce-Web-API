@@ -33,6 +33,7 @@ public class CartServiceImpl implements CartService {
     private final CartMapper cartMapper;
 
     @Override
+    @Transactional
     public CartDTO addProductToCart(UUID productId, int quantity) {
         if (quantity < 0) {
             throw new InvalidCartOperationException("Quantity must be non-negative");
@@ -69,6 +70,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    @Transactional
     public CartDTO updateProductQuantity(UUID productId, int quantity) {
         if (quantity < 0) {
             throw new InvalidCartOperationException("Quantity must be non-negative");
@@ -94,6 +96,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    @Transactional
     public CartDTO removeProductFromCart(UUID productId) {
         Cart cart = getOrCreateCurrentUserCart();
 
@@ -111,6 +114,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    @Transactional
     public CartDTO removeCartItem(UUID cartItemId) {
         Cart cart = getOrCreateCurrentUserCart();
 
@@ -128,6 +132,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    @Transactional
     public CartDTO clearCart() {
         Cart cart = getOrCreateCurrentUserCart();
         cart.clearItems();
@@ -138,6 +143,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    @Transactional
     public CartDTO replaceCartItems(List<ReplaceCartItemRequest> cartItems) {
         Cart cart = getOrCreateCurrentUserCart();
         cart.clearItems();
