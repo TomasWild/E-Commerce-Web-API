@@ -105,7 +105,10 @@ public class JwtAuthenticationFilterTest {
         // Assert
         verify(filterChain).doFilter(request, response);
         assertThat(SecurityContextHolder.getContext().getAuthentication()).isNotNull();
-        assertThat(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).isEqualTo(username);
+        assertThat(SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+                .isInstanceOf(UserDetails.class)
+                .extracting(p -> ((UserDetails) p).getUsername())
+                .isEqualTo(username);
         assertThat(SecurityContextHolder.getContext().getAuthentication().getAuthorities())
                 .asInstanceOf(InstanceOfAssertFactories.LIST)
                 .containsExactly(new SimpleGrantedAuthority("ROLE_USER"));
