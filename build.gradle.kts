@@ -37,6 +37,7 @@ dependencies {
     implementation(libs.thymeleaf.extras.springsecurity6)
     implementation(libs.bouncy.castle.crypto)
     implementation(libs.aws.s3)
+    implementation(libs.stripe)
     implementation(libs.jjwt.api)
     runtimeOnly(libs.bundles.jjwt)
     runtimeOnly(libs.mysql)

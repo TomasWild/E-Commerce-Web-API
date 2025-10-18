@@ -8,6 +8,7 @@ mockito = "5.20.0"
 jjwt = "0.13.0"
 bouncy-castle-crypto = "1.82"
 aws-s3 = "2.35.5"
+stripe = "30.0.0"
 
 [libraries]
 spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
@@ -39,6 +40,7 @@ jjwt-impl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jjwt" }
 jjwt-jackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jjwt" }
 bouncy-castle-crypto = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncy-castle-crypto" }
 aws-s3 = { module = "software.amazon.awssdk:s3", version.ref = "aws-s3" }
+stripe = { module = "com.stripe:stripe-java", version.ref = "stripe" }
 
 [bundles]
 spring-boot-starter = [
