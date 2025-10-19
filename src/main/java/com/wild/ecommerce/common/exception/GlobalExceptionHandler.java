@@ -196,4 +196,20 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler(PaymentProcessingException.class)
+    public ResponseEntity<?> handlePaymentProcessingException(
+            PaymentProcessingException ex,
+            HttpServletRequest request
+    ) {
+        var response = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.PAYMENT_REQUIRED.value(),
+                HttpStatus.PAYMENT_REQUIRED.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.PAYMENT_REQUIRED);
+    }
 }

@@ -36,6 +36,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                         .requestMatchers(SWAGGER_WHITELIST).permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/api/v1/stripe/webhooks/**").permitAll()
                         .requestMatchers("/api/v1/users/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/categories").hasRole("ADMIN")

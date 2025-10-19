@@ -1,11 +1,15 @@
 package com.wild.ecommerce.order.service;
 
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
+import com.wild.ecommerce.address.mapper.AddressMapper;
 import com.wild.ecommerce.address.model.Address;
 import com.wild.ecommerce.address.repository.AddressRepository;
 import com.wild.ecommerce.cart.model.Cart;
 import com.wild.ecommerce.cart.model.CartItem;
 import com.wild.ecommerce.cart.repository.CartRepository;
 import com.wild.ecommerce.common.dto.PageResponse;
+import com.wild.ecommerce.common.exception.PaymentProcessingException;
 import com.wild.ecommerce.common.exception.ResourceNotFoundException;
 import com.wild.ecommerce.order.dto.CreateOrderRequest;
 import com.wild.ecommerce.order.dto.OrderDTO;
@@ -15,7 +19,9 @@ import com.wild.ecommerce.order.model.Order;
 import com.wild.ecommerce.order.model.OrderItem;
 import com.wild.ecommerce.order.model.Status;
 import com.wild.ecommerce.order.repository.OrderRepository;
+import com.wild.ecommerce.payment.dto.StripePaymentDTO;
 import com.wild.ecommerce.payment.model.Payment;
+import com.wild.ecommerce.payment.service.StripeService;
 import com.wild.ecommerce.product.model.Product;
 import com.wild.ecommerce.product.repository.ProductRepository;
 import com.wild.ecommerce.user.model.User;
@@ -31,6 +37,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -44,6 +51,8 @@ public class OrderServiceImpl implements OrderService {
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
+    private final AddressMapper addressMapper;
+    private final StripeService stripeService;
 
     @Override
     @Transactional
@@ -97,20 +106,42 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderItems(orderItems);
         order.setTotalAmount(totalAmount);
 
-        Payment payment = new Payment();
-        payment.setPaymentMethod(request.paymentMethod());
-        payment.setOrder(order);
-
-        order.setPayment(payment);
-
         Order savedOrder = orderRepository.save(order);
 
-        cart.clearItems();
-        cartRepository.save(cart);
+        log.info("Created order with ID: {} for user {}", savedOrder.getId(), userEmail);
 
-        log.info("Order placed successfully with id: {} for user: {}", savedOrder.getId(), userEmail);
+        try {
+            StripePaymentDTO paymentDTO = new StripePaymentDTO(
+                    totalAmount.multiply(BigDecimal.valueOf(100)).longValue(),
+                    "usd",
+                    user.getFirstName(),
+                    userEmail,
+                    "Order payment for order #" + savedOrder.getId(),
+                    addressMapper.apply(address),
+                    Map.of("orderId", String.valueOf(savedOrder.getId()))
+            );
 
-        return orderMapper.apply(savedOrder);
+            PaymentIntent paymentIntent = stripeService.paymentIntent(paymentDTO);
+
+            Payment payment = new Payment();
+            payment.setPaymentMethod(request.paymentMethod());
+            payment.setStripePaymentId(paymentIntent.getId());
+            payment.setOrder(savedOrder);
+
+            savedOrder.setPayment(payment);
+            savedOrder = orderRepository.save(savedOrder);
+
+            cart.clearItems();
+            cartRepository.save(cart);
+
+            log.info("Stripe PaymentIntent created successfully for order {}", savedOrder.getId());
+
+            return orderMapper.apply(savedOrder);
+
+        } catch (StripeException e) {
+            log.error("Stripe PaymentIntent creation failed for order {}", savedOrder.getId(), e);
+            throw new PaymentProcessingException("Failed to create Stripe PaymentIntent");
+        }
     }
 
     @Override
