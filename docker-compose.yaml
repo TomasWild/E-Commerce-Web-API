@@ -59,6 +59,16 @@ services:
       - app-network
     restart: unless-stopped
 
+  stripe-cli:
+    container_name: stripe-cli
+    image: stripe/stripe-cli:latest
+    environment:
+      STRIPE_API_KEY: ${STRIPE_API_KEY}
+    command: listen --api-key ${STRIPE_API_KEY} --forward-to http://host.docker.internal:8080/api/v1/stripe/webhooks --skip-verify
+    networks:
+      - app-network
+    restart: unless-stopped
+
 volumes:
   mysql-data:
     driver: local

@@ -58,6 +58,7 @@ public class StripeServiceImpl implements StripeService {
                                 )
                                 .build()
                 )
+                .putAllMetadata(stripePaymentDTO.metadata())
                 .build();
 
         return PaymentIntent.create(params);
