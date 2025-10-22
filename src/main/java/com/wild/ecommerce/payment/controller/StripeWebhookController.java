@@ -8,6 +8,7 @@ import com.wild.ecommerce.common.exception.ResourceNotFoundException;
 import com.wild.ecommerce.order.model.Order;
 import com.wild.ecommerce.order.model.Status;
 import com.wild.ecommerce.order.repository.OrderRepository;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/stripe/webhooks")
 @RequiredArgsConstructor
+@Tag(name = "Stripe Webhooks", description = "Endpoints for handling Stripe webhooks")
 public class StripeWebhookController {
 
     private final OrderRepository orderRepository;
