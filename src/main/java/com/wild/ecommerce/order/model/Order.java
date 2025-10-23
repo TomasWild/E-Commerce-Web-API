@@ -51,6 +51,10 @@ public class Order extends Auditable {
 
     @Column(nullable = false)
     private LocalDateTime orderDate;
+    private String trackingNumber;
+    private String carrier;
+    private LocalDateTime shippedDate;
+    private LocalDateTime deliveredDate;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();

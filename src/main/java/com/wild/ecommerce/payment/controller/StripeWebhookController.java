@@ -8,6 +8,7 @@ import com.wild.ecommerce.common.exception.ResourceNotFoundException;
 import com.wild.ecommerce.order.model.Order;
 import com.wild.ecommerce.order.model.Status;
 import com.wild.ecommerce.order.repository.OrderRepository;
+import com.wild.ecommerce.shipment.service.ShipmentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +29,7 @@ import java.util.UUID;
 public class StripeWebhookController {
 
     private final OrderRepository orderRepository;
+    private final ShipmentService shippingService;
 
     @Value("${stripe.webhook.secret}")
     private String webhookSecret;
@@ -62,7 +64,15 @@ public class StripeWebhookController {
         String orderId = paymentIntent.getMetadata().get("orderId");
 
         if (orderId != null) {
-            updateOrderStatus(UUID.fromString(orderId), Status.CONFIRMED);
+            UUID parsedOrderId = UUID.fromString(orderId);
+
+            updateOrderStatus(parsedOrderId, Status.CONFIRMED);
+
+            try {
+                shippingService.initiateShipping(parsedOrderId);
+            } catch (Exception e) {
+                throw new IllegalStateException("Failed to initiate shipping for order: " + parsedOrderId);
+            }
         }
     }
 
