@@ -9,6 +9,7 @@ import com.wild.ecommerce.auth.service.JwtService;
 import com.wild.ecommerce.order.model.Order;
 import com.wild.ecommerce.order.model.Status;
 import com.wild.ecommerce.order.repository.OrderRepository;
+import com.wild.ecommerce.shipment.service.ShipmentService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,6 +59,9 @@ public class StripeWebhookControllerTest {
 
     @MockitoBean
     private UserDetailsService userDetailsService;
+
+    @MockitoBean
+    private ShipmentService shippingService;
 
     private MockedStatic<Webhook> webhookMock;
     private static final String WEBHOOK_SECRET = "test_webhook_secret";
