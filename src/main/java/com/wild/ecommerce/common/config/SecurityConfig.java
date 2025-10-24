@@ -49,6 +49,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/carts/**").authenticated()
                         .requestMatchers("/api/v1/addresses/**").authenticated()
                         .requestMatchers("/api/v1/orders/**").authenticated()
+                        .requestMatchers("/api/v1/shipping/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement -> sessionManagement

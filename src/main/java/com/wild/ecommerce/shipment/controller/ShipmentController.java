@@ -22,9 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/shipping")
+@RequestMapping("/api/v1/shipments")
 @RequiredArgsConstructor
-@Tag(name = "Shipping", description = "Endpoints for managing order shipping")
+@Tag(name = "Shipments", description = "Endpoints for managing order shipments")
 public class ShipmentController {
 
     private final ShipmentService shippingService;
