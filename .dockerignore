@@ -1,0 +1,42 @@
+# Ignore build directory where Gradle output files are stored
+build/
+
+# Ignore Gradle wrapper files
+gradle/wrapper/gradle-wrapper.jar
+gradle/wrapper/gradle-wrapper.properties
+
+# Ignore IntelliJ IDEA project files
+.idea/
+
+# Ignore Eclipse project files
+.project
+.classpath
+.settings/
+
+# Ignore NetBeans project files
+nbproject/
+
+# Ignore Mac OS X folder attributes
+.DS_Store
+
+# Ignore Linux trash files
+.Trash-*
+
+# Ignore node_modules if there's any front-end part
+node_modules/
+
+# Ignore log files
+*.log
+
+# Ignore temporary files
+*.tmp
+*.swp
+*.swo
+
+# Ignore backup and old files
+*.bak
+*.old
+
+# Ignore environment files
+.env
+.env.local

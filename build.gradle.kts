@@ -27,6 +27,10 @@ repositories {
     mavenCentral()
 }
 
+springBoot {
+    mainClass.set("com.wild.ecommerce.EcommerceApplication")
+}
+
 val mockitoAgent = configurations.create("mockitoAgent")
 
 dependencies {
