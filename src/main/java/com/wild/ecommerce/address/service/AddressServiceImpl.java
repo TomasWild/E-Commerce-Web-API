@@ -14,6 +14,9 @@ import com.wild.ecommerce.user.model.User;
 import com.wild.ecommerce.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -33,6 +36,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "addresses", key = "#userEmail")
     public AddressDTO createAddress(CreateAddressRequest request, String userEmail) {
         User user = userRepository.findByEmailIgnoreCase(userEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("User with email: '" + userEmail + "' not found"));
@@ -52,6 +56,14 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(
+            value = "addresses",
+            key = "#userEmail + '-' + #pageable.pageNumber + '-' + #pageable.pageSize + '-' + " +
+                    "(#country != null ? #country : 'null') + '-' + " +
+                    "(#state != null ? #state : 'null') + '-' + " +
+                    "(#city != null ? #city : 'null') + '-' + " +
+                    "(#postalCode != null ? #postalCode : 'null')"
+    )
     public PageResponse<AddressDTO> getAllAddresses(
             Pageable pageable,
             String country,
@@ -75,6 +87,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "address", key = "#userEmail + '-' + #id")
     public AddressDTO getAddressById(UUID id, String userEmail) {
         User user = userRepository.findByEmailIgnoreCase(userEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("User with email: '" + userEmail + "' not found"));
@@ -94,6 +107,12 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     @Transactional
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "address", key = "#userEmail + '-' + #id"),
+                    @CacheEvict(value = "addresses", key = "#userEmail")
+            }
+    )
     public AddressDTO updateAddress(UUID id, UpdateAddressRequest request, String userEmail) {
         User user = userRepository.findByEmailIgnoreCase(userEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("User with email: '" + userEmail + "' not found"));
@@ -117,6 +136,12 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     @Transactional
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "address", key = "#userEmail + '-' + #id"),
+                    @CacheEvict(value = "addresses", key = "#userEmail")
+            }
+    )
     public void deleteAddress(UUID id, String userEmail) {
         User user = userRepository.findByEmailIgnoreCase(userEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("User with email: '" + userEmail + "' not found"));

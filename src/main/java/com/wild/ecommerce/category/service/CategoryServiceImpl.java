@@ -13,6 +13,9 @@ import com.wild.ecommerce.common.exception.ResourceNotFoundException;
 import com.wild.ecommerce.common.util.BeanUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -31,6 +34,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "categories", allEntries = true)
     public CategoryDTO createCategory(CreateCategoryRequest request) {
         if (categoryRepository.existsByNameIgnoreCase(request.name())) {
             log.warn("Failed to create category - name '{}' already exists", request.name());
@@ -48,6 +52,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(
+            value = "categories",
+            key = "#pageable.pageNumber + '-' + #pageable.pageSize + '-' + (#name != null ? #name : 'all')"
+    )
     public PageResponse<CategoryDTO> getAllCategories(Pageable pageable, String name) {
         Specification<Category> spec = CategorySpecification.filterBy(name);
 
@@ -59,6 +67,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "category", key = "#id")
     public CategoryDTO getCategoryById(UUID id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> {
@@ -71,6 +80,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "category", key = "#id"),
+                    @CacheEvict(value = "categories", allEntries = true)
+            }
+    )
     public CategoryDTO updateCategory(UUID id, UpdateCategoryRequest request) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> {
@@ -94,6 +109,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "category", key = "#id"),
+                    @CacheEvict(value = "categories", allEntries = true)
+            }
+    )
     public void deleteCategory(UUID id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> {

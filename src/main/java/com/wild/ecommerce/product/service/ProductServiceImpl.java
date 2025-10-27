@@ -15,6 +15,9 @@ import com.wild.ecommerce.product.specification.ProductSpecification;
 import com.wild.ecommerce.storage.service.MinioService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -37,6 +40,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "products", allEntries = true)
     public ProductDTO createProduct(CreateProductRequest request) {
         Category category = categoryRepository.findById(request.categoryId())
                 .orElseThrow(() -> {
@@ -67,6 +71,13 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(
+            value = "products",
+            key = "#pageable.pageNumber + '-' + #pageable.pageSize + '-' + " +
+                    "(#name != null ? #name : 'null') + '-' + " +
+                    "(#brand != null ? #brand : 'null') + '-' + " +
+                    "(#categoryId != null ? #categoryId.toString() : 'null')"
+    )
     public PageResponse<ProductDTO> getAllProducts(Pageable pageable, String name, String brand, UUID categoryId) {
         Specification<Product> specification = ProductSpecification.filterBy(name, brand, categoryId);
 
@@ -79,6 +90,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "product", key = "#id")
     public ProductDTO getProductById(UUID id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> {
@@ -91,6 +103,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "product", key = "#id"),
+                    @CacheEvict(value = "products", allEntries = true)
+            }
+    )
     public ProductDTO updateProduct(UUID id, UpdateProductRequest request) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> {
@@ -136,6 +154,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "product", key = "#id"),
+                    @CacheEvict(value = "products", allEntries = true)
+            }
+    )
     public void deleteProduct(UUID id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> {
