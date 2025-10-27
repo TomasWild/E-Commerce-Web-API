@@ -1,5 +1,6 @@
 services:
   app:
+    container_name: app
     image: ${DOCKER_REGISTRY-}ecommerce
     build:
       context: .
@@ -40,8 +41,6 @@ services:
   redis:
     container_name: redis
     image: redis:8.2.2
-    environment:
-      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
     ports:
       - "6379:6379"
     networks:
